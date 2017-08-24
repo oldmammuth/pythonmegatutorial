@@ -1,0 +1,18 @@
+#!/bin/sh
+BASEDIR=`dirname $0`
+# Check venv
+if [ ! -d "venv/" ]; then
+    virtualenv -q venv/ --no-site-packages && echo "venv done."
+fi
+# Check for updates virtualenv e pip
+if [ ! -f "venv/updated" -o requirements.txt -nt venv/updated ]; then
+    . venv/bin/activate && pip install -r requirements.txt && touch venv/updated && echo "pip inst/update done."
+fi
+# Activate virtualenv and export python's variable
+. $BASEDIR/venv/bin/activate
+cd $BASEDIR
+export PYTHONPATH=.
+# Execute the command
+exec python $@ 
+# Deactivate virtualenv
+deactivate 
